@@ -3,12 +3,14 @@
 
 #include <limits>
 #include <vector>
+//#include <list>
 #include <iostream>
 #include <cmath>
 using std::cin;
 using std::cout;
 using std::endl;
 using std::vector;
+//using std::list;
 using std::numeric_limits;
 
 
@@ -44,7 +46,7 @@ class Address{
         }
 
         void print () {
-            cout << "(" << getX() << "," << getY() << ") " << endl;
+            cout << "(" << getX() << "," << getY() << ") ";
         }
 
         
@@ -52,58 +54,76 @@ class Address{
 
 class AddressList{
     protected:
-        vector<Address> list;
+        vector<Address> addresses;
     public:
         AddressList(){};
 
         void addAddress(Address newHouse){
             bool isEqual = false;
-            for(auto house : list){
+            for(auto house : addresses){
                 if (house.distance(newHouse) == 0){
                     isEqual = true;
                     break;
                 }
             }
             if(!isEqual) {
-                list.push_back(newHouse);
+                addresses.push_back(newHouse);
             }
 
         }
 
+        void addAddress(int x, int y){
+            Address newHouse(x,y);
+            addAddress(newHouse);
+        }
+
+        void removeAddress(int i){
+            addresses.erase(addresses.begin() + i);
+        }
+
+        int addressesSize(){
+            return addresses.size();
+        }
+
+        Address at(int i){
+            return addresses.at(i);
+        }
+
         /**
          * Finds the distance traveled by a truck that visits
-         * each Address in list, in order.
+         * each Address in addresses, in order.
          * 
          * @return the total distance 
          */
-        double length(){
+        double length(bool manhattan=true){
             double result = 0;
-            for(int i = 0; i < list.size()-1; i++){
-                result += list.at(i).distance(list.at(i+1));
+            for(int i = 0; i < addresses.size()-1; i++){
+                result += addresses.at(i).distance(addresses.at(i+1), manhattan);
             }
             return result;
         }
 
         /**
-         * Finds the index of the Address in list that is closest
+         * Finds the index of the Address in addresses that is closest
          * to house.
          * 
          * @param house the address that is being compared to 
-         * @return the index of Address in list 
+         * @return the index of Address in addresses 
          */
         int indexClosestTo(Address house){
-            double minDist = numeric_limits<double>::max();
+            double minDist = numeric_limits<int>::max();
             int index = 0;
-            for(int i = 0; i < list.size(); i++){
-                if (house.distance(list.at(i)) < minDist){
+            for(int i = 0; i < addresses.size(); i++){
+                if (house.distance(addresses.at(i)) < minDist){
                     index = i;
+                    minDist = house.distance(addresses.at(i));
                 }
             }
             return index;
         }
 
         void print () {
-            for (auto house : list){
+            for (auto house : addresses){
                 house.print();
             }
         }
@@ -114,16 +134,31 @@ class Route : public AddressList{
         Address depot;
     public:
         Route(): depot(0,0) {
-            list.push_back(depot);
+            addresses.push_back(depot);
         }
         
-        double length(){
-            return AddressList::length() + depot.distance(list.back());
+        double length(bool manhattan=true){
+            return AddressList::length(manhattan) + depot.distance(addresses.back(), manhattan);
         }
 
         void print(){
             AddressList::print();
             depot.print();
+        }
+
+        Route greedyRoute(){
+            Route copy = *this;
+            Route greedy;
+            Address currentLoc = depot;
+            int i;
+            while(copy.addressesSize() > 0){
+                i = copy.indexClosestTo(currentLoc);
+                currentLoc = copy.at(i);
+                greedy.addAddress(currentLoc);
+                copy.removeAddress(i);
+            }
+            greedy.print();
+            return greedy;
         }
         
 };

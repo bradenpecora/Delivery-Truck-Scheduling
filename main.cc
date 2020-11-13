@@ -13,9 +13,9 @@ int main () {
     while (true)
     {
         cin >> x >> y;
-        if(x != 0 && y != 0){
-            Address newHouse(x,y);
-            list.addAddress(newHouse);
+        cout << "Entered Address: (" << x << "," << y << ")" << endl;
+        if(x != 0 || y != 0){
+            list.addAddress(x,y);
         }
         else{
             break;
@@ -23,8 +23,11 @@ int main () {
     }
 
     list.print();
+    cout << endl;
+    Route greedy = list.greedyRoute();
     
-    cout << list.length() << endl;
+    
+    cout << greedy.length() << endl;
 
     return 0;
 
