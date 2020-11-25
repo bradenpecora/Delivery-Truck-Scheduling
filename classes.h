@@ -41,7 +41,9 @@ class Address{
             if(manhattan){
                 return (abs(x-house.getX())) + (abs(y-house.getY()));
             }
-            //TODO: Non-manhattan distance
+            else{
+                return sqrt(pow(x-house.getX(),2) + pow(y-house.getY(),2));
+            }
             return 0;
         }
 
@@ -81,6 +83,12 @@ class AddressList{
             addresses.erase(addresses.begin() + i);
         }
 
+        void swapAddresses(int i,int j){
+            Address temp = addresses.at(i);
+            addresses.at(i) = addresses.at(j);
+            addresses.at(j) = temp;
+        }
+
         int addressesSize(){
             return addresses.size();
         }
@@ -110,13 +118,13 @@ class AddressList{
          * @param house the address that is being compared to 
          * @return the index of Address in addresses 
          */
-        int indexClosestTo(Address house){
+        int indexClosestTo(Address house, bool manhattan=true){
             double minDist = numeric_limits<int>::max();
             int index = 0;
             for(int i = 0; i < addresses.size(); i++){
-                if (house.distance(addresses.at(i)) < minDist){
+                if (house.distance(addresses.at(i), manhattan) < minDist){
                     index = i;
-                    minDist = house.distance(addresses.at(i));
+                    minDist = house.distance(addresses.at(i), manhattan);
                 }
             }
             return index;
@@ -146,19 +154,30 @@ class Route : public AddressList{
             depot.print();
         }
 
-        Route greedyRoute(){
+        Route greedyRoute(bool manhattan=true){
             Route copy = *this;
             Route greedy;
             Address currentLoc = depot;
             int i;
             while(copy.addressesSize() > 0){
-                i = copy.indexClosestTo(currentLoc);
+                i = copy.indexClosestTo(currentLoc, manhattan);
                 currentLoc = copy.at(i);
                 greedy.addAddress(currentLoc);
                 copy.removeAddress(i);
             }
-            greedy.print();
             return greedy;
+        }
+        
+        Route opt2Route(bool manhattan=true){
+            Route opt2 = greedyRoute();
+            for(int i = 0; i < addresses.size()-1; i++){
+                Route test = opt2;
+                test.swapAddresses(i, i+1);
+                if(test.length(manhattan) < opt2.length(manhattan)){
+                    opt2 = test;
+                }
+            }
+            return opt2;
         }
         
 };
