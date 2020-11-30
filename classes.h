@@ -88,6 +88,10 @@ class AddressList{
             addresses.at(i) = addresses.at(j);
             addresses.at(j) = temp;
         }
+                
+        void replaceAddress(int i, Address toSwap){
+            addresses.at(i) = toSwap;
+        }
 
         int addressesSize(){
             return addresses.size();
@@ -147,7 +151,7 @@ class Route : public AddressList{
         
         double length(bool manhattan=true){
             return AddressList::length(manhattan) + depot.distance(addresses.back(), manhattan);
-        }
+        }        
 
         void print(){
             AddressList::print();
@@ -169,15 +173,167 @@ class Route : public AddressList{
         }
         
         Route opt2Route(bool manhattan=true){
-            Route opt2 = greedyRoute();
+            Route opt2 = greedyRoute(manhattan);
+            int swapcount = 0;
             for(int i = 0; i < addresses.size()-1; i++){
-                Route test = opt2;
-                test.swapAddresses(i, i+1);
-                if(test.length(manhattan) < opt2.length(manhattan)){
-                    opt2 = test;
+                // Route test = opt2;
+                // test.swapAddresses(i, i+1);
+                // if(test.length(manhattan) < opt2.length(manhattan)){
+                //     opt2 = test;
+                //     swapcount++;
+                // }
+                double origLength = opt2.length(manhattan);
+                opt2.swapAddresses(i, i+1);
+                if (!(opt2.length(manhattan) < origLength))
+                {
+                    opt2.swapAddresses(i, i + 1);
+                    
+                }
+                else{
+                    swapcount++;
                 }
             }
+            //cout << swapcount << endl;
             return opt2;
+        }
+        /**
+         * Splits this AddressList into n routes, each of size addresses.size()/n
+         * 
+         * @param n - number of trucks
+         * @param manhattan 
+         * @return Route 
+         */
+        vector<Route> splitRoute(int n){
+            vector<Route> routes(n);
+            int i = 0;
+            for(Address house: addresses){
+                routes[i].addAddress(house);
+                i++;
+                i = i%n;
+            }
+
+            return routes;
+        }
+        double twoTruckLength(vector<Route> truckPaths, bool manhattan=true){
+            return truckPaths[0].length(manhattan) + truckPaths[1].length(manhattan);
+        }
+        
+        void directSwap(vector<Route> &truckPaths, int i){
+            Address temp = truckPaths[0].at(i);
+            truckPaths[0].replaceAddress(i, truckPaths[1].at(i));
+            truckPaths[1].replaceAddress(i, temp);
+        }
+        
+        void diagonalSwap1(vector<Route> &truckPaths, int i){
+            Address temp = truckPaths[0].at(i);
+            truckPaths[0].replaceAddress(i, truckPaths[1].at(i+1));
+            truckPaths[1].replaceAddress(i+1, temp);
+        }
+
+        void diagonalSwap2(vector<Route> &truckPaths, int i){
+            Address temp = truckPaths[1].at(i);
+            truckPaths[1].replaceAddress(i, truckPaths[0].at(i+1));
+            truckPaths[0].replaceAddress(i+1, temp);
+        }
+        
+        vector<Route> multiOpt2(bool manhattan=true){
+            vector<Route> truckPaths = splitRoute(2);
+            for(Route truckPath: truckPaths){
+                truckPath.opt2Route(manhattan);
+            }
+            truckPaths[0].print();
+            cout << truckPaths[0].length(manhattan);
+            cout << endl;
+            truckPaths[1].print();
+            cout << truckPaths[1].length(manhattan);
+            cout << endl;
+            for(int i = 1; i < addresses.size()/2; i++){
+                int shortestPath = 0;
+                double origLength = twoTruckLength(truckPaths, manhattan);
+                double shortestLength = origLength;
+
+                Address temp = truckPaths[0].at(i);
+
+                directSwap(truckPaths,i);
+                double directSwapLength = twoTruckLength(truckPaths, manhattan);
+                if (directSwapLength < shortestLength){
+                    shortestLength = directSwapLength;
+                    shortestPath = 1;
+                }
+
+                // revert to original routes
+                truckPaths[1].replaceAddress(i, truckPaths[0].at(i));
+                truckPaths[0].replaceAddress(i, temp);
+
+                if(i+1 < truckPaths[1].addressesSize()){
+                    diagonalSwap1(truckPaths, i);
+                    double diagonalSwap1 = twoTruckLength(truckPaths, manhattan);
+
+                    if (diagonalSwap1 < shortestLength){
+                        shortestLength = diagonalSwap1;
+                        shortestPath = 2;
+                    }
+
+                    // revert to original routes
+                    truckPaths[1].replaceAddress(i+1, truckPaths[0].at(i));
+                    truckPaths[0].replaceAddress(i, temp);
+                }
+                if(i+1 < truckPaths[0].addressesSize()){
+                    temp = truckPaths[1].at(i);
+                    diagonalSwap2(truckPaths, i);
+                    double diagonalSwap2 = twoTruckLength(truckPaths, manhattan);
+
+                    if (diagonalSwap2 < shortestLength){
+                        shortestLength = diagonalSwap2;
+                        shortestPath = 3;
+                    }
+                
+                    // revert to original routes
+                    truckPaths[0].replaceAddress(i+1, truckPaths[1].at(i));
+                    truckPaths[1].replaceAddress(i, temp);
+                    if(i+1 < truckPaths[1].addressesSize()){
+                        temp = truckPaths[0].at(i+1);
+                        directSwap(truckPaths, i+1);
+                        double directSwap2 = twoTruckLength(truckPaths, manhattan);
+
+                        if (directSwap2 < shortestLength){
+                            shortestLength = directSwap2;
+                            shortestPath = 4;
+                        }
+
+                        // revert to original routes
+                        truckPaths[1].replaceAddress(i+1, truckPaths[0].at(i+1));
+                        truckPaths[0].replaceAddress(i+1, temp);
+                    }
+                }
+                
+                switch(shortestPath){
+                    case 0:
+                        break;
+                    case 1:
+                        directSwap(truckPaths,i);
+                        break;
+                    case 2:
+                        diagonalSwap1(truckPaths,i);
+                        break;
+                    case 3:
+                        diagonalSwap2(truckPaths,i);
+                        break;
+                    case 4:
+                        directSwap(truckPaths,i+1);
+                        break;
+                }
+            }
+
+            cout << endl;
+            truckPaths[0].print();
+            cout << truckPaths[0].length(manhattan);
+            cout << endl;
+            truckPaths[1].print();
+            cout << truckPaths[1].length(manhattan);
+            cout << endl;
+
+            return truckPaths;
         }
         
 };
