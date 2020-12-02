@@ -6,12 +6,15 @@
 //#include <list>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 using std::cin;
 using std::cout;
 using std::endl;
 using std::vector;
+using std::reverse;
 //using std::list;
 using std::numeric_limits;
+using std::max;
 
 
 class Address{
@@ -87,6 +90,10 @@ class AddressList{
             Address temp = addresses.at(i);
             addresses.at(i) = addresses.at(j);
             addresses.at(j) = temp;
+        }
+        
+        void reverseAddresses(int start, int numToSwap){
+            reverse(addresses.begin()+start, addresses.begin()+start+numToSwap);
         }
                 
         void replaceAddress(int i, Address toSwap){
@@ -175,25 +182,30 @@ class Route : public AddressList{
         Route opt2Route(bool manhattan=true){
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
-            for(int i = 0; i < addresses.size()-1; i++){
-                // Route test = opt2;
-                // test.swapAddresses(i, i+1);
-                // if(test.length(manhattan) < opt2.length(manhattan)){
-                //     opt2 = test;
-                //     swapcount++;
-                // }
-                double origLength = opt2.length(manhattan);
-                opt2.swapAddresses(i, i+1);
-                if (!(opt2.length(manhattan) < origLength))
-                {
-                    opt2.swapAddresses(i, i + 1);
-                    
+            int maxToSwap = max((int)floor(0.1*opt2.addressesSize()), 1);
+            cout << maxToSwap << endl;
+            for(int numToSwap = 1; numToSwap < maxToSwap; numToSwap++){
+                for(int i = 1; i < addresses.size()-numToSwap; i++){
+                    // Route test = opt2;
+                    // test.reverseAddresses(i, numToSwap);
+                    // if(test.length(manhattan) < opt2.length(manhattan)){
+                    //     opt2 = test;
+                    //     swapcount++;
+                    // }
+                    double origLength = opt2.length(manhattan);
+                    opt2.reverseAddresses(i, numToSwap);
+                    if (!(opt2.length(manhattan) < origLength))
+                    {
+                        opt2.reverseAddresses(i, numToSwap);
+                        
+                    }
+                    else{
+                        swapcount++;
+                    }
                 }
-                else{
-                    swapcount++;
-                }
+                cout << numToSwap << endl;
             }
-            //cout << swapcount << endl;
+            cout << endl << swapcount << endl;
             return opt2;
         }
         /**
