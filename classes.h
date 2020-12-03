@@ -18,10 +18,12 @@ using std::max;
 using std::min;
 
 class Address{
-    private:
+    protected:
         int x, y; // Cartesian coordinates of address
+        bool prime;
     public:
-        Address(int i, int j): x(i), y(j){};
+        Address(int i, int j): x(i), y(j), prime(false){};
+        Address(int i, int j, bool isPrime): x(i), y(j), prime(isPrime){};
         
         int getX(){
             return x;
@@ -29,6 +31,19 @@ class Address{
         
         int getY(){
             return y;
+        }
+        
+        bool isPrime(){
+            return prime;
+        }
+
+        void changePrimeTo(bool isPrime){
+            prime = isPrime;
+        }
+
+        void add1(){
+            x++;
+            cout << x << endl;
         }
 
         /**
@@ -78,6 +93,11 @@ class AddressList{
 
         void addAddress(int x, int y){
             Address newHouse(x,y);
+            addAddress(newHouse);
+        }
+
+        void addAddress(int x, int y, bool prime){
+            Address newHouse(x,y,prime);
             addAddress(newHouse);
         }
 
@@ -223,8 +243,10 @@ class Route : public AddressList{
         void swapTwoPortions(vector<Route> &truckPaths, int start1, int start2, int numToSwap, bool manhattan = true){
             Route copy1 = truckPaths.at(0);
             for(int i = 0; i < numToSwap; i++){
-                truckPaths.at(0).replaceAddress(start1 + i, truckPaths.at(1).at(start2 + i));
-                truckPaths.at(1).replaceAddress(start2 + i, copy1.at(start1 + i));
+                if(!truckPaths.at(0).at(start1 + i).isPrime() && !truckPaths.at(1).at(start2 + i).isPrime()){
+                    truckPaths.at(0).replaceAddress(start1 + i, truckPaths.at(1).at(start2 + i));
+                    truckPaths.at(1).replaceAddress(start2 + i, copy1.at(start1 + i));
+                }
             }
         }
 
@@ -235,7 +257,7 @@ class Route : public AddressList{
             }
             
             int maxToSwap = max((int)floor(0.5*addresses.size()/2), 1);
-            cout << "MaxToSwap: " << maxToSwap << endl;
+            //cout << "MaxToSwap: " << maxToSwap << endl;
             //vector<Route> actualMin = truckPaths;
             for(int lengthToSwap = maxToSwap; lengthToSwap > 0; lengthToSwap--){
             // for(int lengthToSwap = 1; lengthToSwap < maxToSwap; lengthToSwap++){
@@ -266,7 +288,7 @@ class Route : public AddressList{
                         double reverseBothLength = twoTruckLength(reverseBoth, manhattan);
 
                         double minLength = min({swapLength, reverseFirstLength, reverseSecondLength, reverseBothLength, origLength});
-                        cout << minLength << endl;
+                        //cout << minLength << endl;
                         if(minLength == swapLength){
                             minTestPath = swap;
                         }else if (minLength == reverseFirstLength){
