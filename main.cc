@@ -24,39 +24,38 @@ int main () {
     //     }
     // }
     
-    ifstream file("data.txt");
+
+
+    //multiOpt2 Demonstration
+    Route input;
+
+    ifstream file("multiOpt2TestCase.txt");
     float x,y;
     while(file >> x >> y){
         if(x != 0 || y != 0){
-            list.addAddress(x,y);
+            input.addAddress(x,y);
         }
         else{
             break;
         }
     }
     
-
-    // list.print();
-    cout << endl;
     bool manhattan = false;
-    // Route greedy = list.greedyRoute(manhattan);
-    // Route opt2 = list.opt2Route(manhattan);
-    // greedy.print();
-    vector<Route> origSplit = list.splitRoute(2);
+ 
+    vector<Route> origSplit = input.splitRoute(2);
     origSplit.at(0).opt2Route();
     origSplit.at(1).opt2Route();
-    vector<Route> split = list.twoTruckOpt2(manhattan);
+    vector<Route> split = input.twoTruckOpt2(manhattan);
 
-    
     cout << "Original Route:" << endl;
     origSplit.at(0).print(); cout << origSplit.at(0).length(manhattan) << endl;
     origSplit.at(1).print(); cout << origSplit.at(1).length(manhattan) << endl;
-    cout << list.twoTruckLength(origSplit, manhattan) << endl << endl <<endl;
+    cout << "Original Length: " << list.twoTruckLength(origSplit, manhattan) << endl << endl <<endl;
 
     cout << "New Route:" << endl;
     split.at(0).print(); cout << split.at(0).length(manhattan) << endl;
     split.at(1).print(); cout << split.at(1).length(manhattan) << endl;
-    cout << list.twoTruckLength(split, manhattan) << endl;
+    cout << "New Length: " << list.twoTruckLength(split, manhattan) << endl;
 
     // cout << endl;
     // opt2.print();

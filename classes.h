@@ -74,7 +74,6 @@ class AddressList{
             if(!isEqual) {
                 addresses.push_back(newHouse);
             }
-
         }
 
         void addAddress(int x, int y){
@@ -235,13 +234,18 @@ class Route : public AddressList{
                 truckPath.opt2Route(manhattan);
             }
             
-            int maxToSwap = max((int)floor(0.1*addresses.size()/2), 2);
+            int maxToSwap = max((int)floor(0.5*addresses.size()/2), 1);
             cout << "MaxToSwap: " << maxToSwap << endl;
-            double origLength = twoTruckLength(truckPaths, manhattan);
+            //vector<Route> actualMin = truckPaths;
             for(int lengthToSwap = maxToSwap; lengthToSwap > 0; lengthToSwap--){
+            // for(int lengthToSwap = 1; lengthToSwap < maxToSwap; lengthToSwap++){
+                vector<Route> minPath = truckPaths;
                 for(int path1 = 1; path1 <= truckPaths.at(0).addressesSize()-lengthToSwap; path1++){
+                    vector<Route> minTestPath = minPath;
                     for(int path2 = 1; path2 <= truckPaths.at(1).addressesSize()-lengthToSwap; path2++){
-                        vector<Route> swapCopy = truckPaths;
+                        double origLength = twoTruckLength(truckPaths, manhattan);
+
+                        vector<Route> swap = truckPaths;
                         vector<Route> reverseFirst = truckPaths;
                         vector<Route> reverseSecond = truckPaths;
                         vector<Route> reverseBoth(2);
@@ -251,32 +255,39 @@ class Route : public AddressList{
                         reverseBoth.at(0) = reverseFirst.at(0);
                         reverseBoth.at(1) = reverseSecond.at(1);
 
-                        swapTwoPortions(swapCopy, path1, path2, lengthToSwap, manhattan);
+                        swapTwoPortions(swap, path1, path2, lengthToSwap, manhattan);
                         swapTwoPortions(reverseFirst, path1, path2, lengthToSwap, manhattan);
                         swapTwoPortions(reverseSecond, path1, path2, lengthToSwap, manhattan);
                         swapTwoPortions(reverseBoth, path1, path2, lengthToSwap, manhattan);
 
-                        double swapCopyLength = twoTruckLength(swapCopy,manhattan);
+                        double swapLength = twoTruckLength(swap,manhattan);
                         double reverseFirstLength = twoTruckLength(reverseFirst, manhattan);
                         double reverseSecondLength = twoTruckLength(reverseSecond, manhattan);
                         double reverseBothLength = twoTruckLength(reverseBoth, manhattan);
 
-                        double minLength = min({swapCopyLength, reverseFirstLength, reverseSecondLength, reverseBothLength, origLength});
-                        if(minLength == swapCopyLength){
-                            truckPaths = swapCopy;
+                        double minLength = min({swapLength, reverseFirstLength, reverseSecondLength, reverseBothLength, origLength});
+                        cout << minLength << endl;
+                        if(minLength == swapLength){
+                            minTestPath = swap;
                         }else if (minLength == reverseFirstLength){
-                            truckPaths = reverseFirst;
+                            minTestPath = reverseFirst;
                         }else if (minLength == reverseSecondLength){
-                            truckPaths = reverseSecond;
+                            minTestPath = reverseSecond;
                         }else if (minLength == reverseBothLength){
-                            truckPaths = reverseBoth;
+                            minTestPath = reverseBoth;
                         }
                     }
+                    if(twoTruckLength(minPath, manhattan) > twoTruckLength(minTestPath, manhattan)){
+                        minPath = minTestPath;
+                    }
+                }
+                if(twoTruckLength(truckPaths, manhattan) > twoTruckLength(minPath, manhattan)){
+                    truckPaths = minPath;
                 }
             }
-            // for(Route truckPath: truckPaths){
-            //     truckPath.opt2Route(manhattan);
-            // }
+            // if(twoTruckLength(truckPaths, manhattan) > twoTruckLength(truckPaths, manhattan)){
+            //         truckPaths = actualMin;
+            //     }
             return truckPaths;
         }
 
