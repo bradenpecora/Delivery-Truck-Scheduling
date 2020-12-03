@@ -151,7 +151,7 @@ int main () {
 
 
     cout << "**Many-Address Prime Routes:" << endl;
-    double primePercent = 0.40;
+    double primePercent = 0.45;
     Route primeList;
 
     ifstream manyPrimeListFile("manyPrimeTestCase.txt");
@@ -166,18 +166,14 @@ int main () {
 
     vector<Route> noPrime = primeList.twoTruckOpt2(manhattan);
 
-    for (int i = 1; i <= floor(primePercent*primeList.addressesSize()); i++){
+    int primeCounter = 1;
+    for (int i = 1; i < floor(primePercent*primeList.addressesSize()); i++){
+        primeCounter++;
         Address toPrime = primeList.at(i);
         toPrime.changePrimeTo(true);
         primeList.replaceAddress(i,toPrime);
     }
-    int counter = 0;
-    for (int i = 0 ; i < primeList.addressesSize(); i ++) {
-        if (primeList.at(i).isPrime()){
-            counter++;
-        }
-    }
-    cout << counter << " out of " << primeList.addressesSize() << " addresses are prime and can not be swapped." << endl;
+    cout << primeCounter << " out of " << primeList.addressesSize() << " addresses are prime and can not be swapped." << endl;
 
     vector<Route> withPrime = primeList.twoTruckOpt2(manhattan);
 
