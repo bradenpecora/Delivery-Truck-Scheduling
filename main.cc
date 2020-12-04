@@ -11,6 +11,9 @@ using std::ifstream;
 int main () {
 
     bool manhattan = false;
+    float x,y;
+    bool prime;
+
 
     /////////////////////////////////////////////////////////////////////////
     //55.3
@@ -38,14 +41,10 @@ int main () {
 
     Route sampleTour;
 
-    ifstream opt2file("opt2TestCase.txt");
-    int x,y;
+    ifstream opt2file("data/opt2TestCase.txt");
     while(opt2file >> x >> y){
         if(x != 0 || y != 0){
             sampleTour.addAddress(x,y);
-        }
-        else{
-            break;
         }
     }
 
@@ -64,30 +63,23 @@ int main () {
 
     Route multiOpt2input;
 
-    ifstream multOpt2File("multiOpt2TestCase.txt");
+    ifstream multOpt2File("data/multiOpt2TestCase.txt");
     while(multOpt2File >> x >> y){
         if(x != 0 || y != 0){
             multiOpt2input.addAddress(x,y);
-        }
-        else{
-            break;
         }
     }
  
     vector<Route> origSplit = multiOpt2input.splitRoute(2);
     origSplit.at(0).opt2Route();
     origSplit.at(1).opt2Route();
-    vector<Route> split = multiOpt2input.twoTruckOpt2(manhattan);
+    vector<Route> multiOpt2Split = multiOpt2input.twoTruckOpt2(manhattan,0.5);
 
     cout << "**Original Route:" << endl;
-    origSplit.at(0).print(); cout << "Length: " << origSplit.at(0).length(manhattan) << endl;
-    origSplit.at(1).print(); cout << "Length: " << origSplit.at(1).length(manhattan) << endl;
-    cout << "Total Length: " << multiOpt2input.twoTruckLength(origSplit, manhattan) << endl << endl;
+    twoRouteOutput(origSplit, manhattan);
 
     cout << "**New Route:" << endl;
-    split.at(0).print(); cout << "Length: " << split.at(0).length(manhattan) << endl;
-    split.at(1).print(); cout << "Length: " << split.at(1).length(manhattan) << endl;
-    cout << "New Total Length: " << multiOpt2input.twoTruckLength(split, manhattan) << endl << endl;
+    twoRouteOutput(multiOpt2Split, manhattan);
 
     /////////////////////////////////////////////////////////////////////////
     //55.8
@@ -97,25 +89,18 @@ int main () {
     
     cout << "**Few-Addresses Prime Routes:" << endl;
     Route noPrimeTruck;
-    ifstream fewPrimeListFileNoPrime("fewPrimeTestCase.txt");
-    bool prime;
+    ifstream fewPrimeListFileNoPrime("data/fewPrimeTestCase.txt");
     while(fewPrimeListFileNoPrime >> x >> y >> prime){
         if(x != 0 || y != 0){
             noPrimeTruck.addAddress(x,y);
         }
-        else{
-            break;
-        }
     }
 
     Route primeTruck;
-    ifstream fewPrimeListFile("fewPrimeTestCase.txt");
+    ifstream fewPrimeListFile("data/fewPrimeTestCase.txt");
     while(fewPrimeListFile >> x >> y >> prime){
         if(x != 0 || y != 0){
             primeTruck.addAddress(x,y,prime);
-        }
-        else{
-            break;
         }
     }
 
@@ -130,81 +115,85 @@ int main () {
 
     vector<Route> noOrg = noPrimeTruck.splitRoute(2);
     cout << "*Routes as inputted: " << endl;
-    noOrg.at(0).print(); cout << "Length: " << noOrg.at(0).length(manhattan) << endl;
-    noOrg.at(1).print(); cout << "Length: " << noOrg.at(1).length(manhattan) << endl;
-    cout << "Total Length: " << noPrimeTruck.twoTruckLength(noOrg, manhattan) << endl;
+    twoRouteOutput(noOrg, manhattan);
 
     vector<Route> noPrimeTwoTruck = noPrimeTruck.twoTruckOpt2(manhattan);
-    cout << "*opt2 Optimized Routes without accounting for 'Prime' status:" << endl;
-    noPrimeTwoTruck.at(0).print(); cout << "Length: " << noPrimeTwoTruck.at(0).length(manhattan) << endl;
-    noPrimeTwoTruck.at(1).print(); cout << "Length: " << noPrimeTwoTruck.at(1).length(manhattan) << endl;
-    cout << "Total Length: " << noPrimeTruck.twoTruckLength(noPrimeTwoTruck, manhattan) << endl;
+    cout << "*Multi-opt2 Optimized Routes without accounting for 'Prime' status:" << endl;
+    twoRouteOutput(noPrimeTwoTruck, manhattan);
 
     vector<Route> primeTwoTruck = primeTruck.twoTruckOpt2(manhattan);
-    cout << "*opt2 Optimized Routes where Prime addresses can not be swappeed:" << endl;
-    primeTwoTruck.at(0).print(); cout << "Length: " << primeTwoTruck.at(0).length(manhattan) << endl;
-    primeTwoTruck.at(1).print(); cout << "Length: " << primeTwoTruck.at(1).length(manhattan) << endl;
-    cout << "Total Length: " << primeTruck.twoTruckLength(primeTwoTruck, manhattan) << endl << endl;
-
-
-
-
+    cout << "*Multi-opt2 Optimized Routes where Prime addresses can not be swapped:" << endl;
+    twoRouteOutput(primeTwoTruck, manhattan);
 
     cout << "**Many-Address Prime Routes:" << endl;
-    double primePercent = 0.45;
     Route primeList;
 
-    ifstream manyPrimeListFile("manyPrimeTestCase.txt");
+    ifstream manyPrimeListFile("data/manyPrimeTestCase.txt");
     while(manyPrimeListFile >> x >> y){
         if(x != 0 || y != 0){
             primeList.addAddress(x,y);
         }
-        else{
-            break;
-        }
     }
 
-    vector<Route> noPrime = primeList.twoTruckOpt2(manhattan);
+    vector<Route> noPrime = primeList.twoTruckOpt2(manhattan, 0.5);
 
-    int primeCounter = 1;
-    for (int i = 1; i < floor(primePercent*primeList.addressesSize()); i++){
-        primeCounter++;
-        Address toPrime = primeList.at(i);
+    double primePercent = 0.40;
+    int primeCounter = 0;
+    for (;primeCounter < floor(primePercent*primeList.addressesSize()); primeCounter++){
+        Address toPrime = primeList.at(primeCounter); 
         toPrime.changePrimeTo(true);
-        primeList.replaceAddress(i,toPrime);
+        primeList.replaceAddress(primeCounter,toPrime);
     }
     cout << primeCounter << " out of " << primeList.addressesSize() << " addresses are prime and can not be swapped." << endl;
 
-    vector<Route> withPrime = primeList.twoTruckOpt2(manhattan);
+    vector<Route> withPrime = primeList.twoTruckOpt2(manhattan, 0.5);
 
     cout << "Length of two routes optimized without accounting for Amazon Prime status: ";
-    cout << primeList.twoTruckLength(noPrime, manhattan) << endl;
+    cout << twoTruckLength(noPrime, manhattan) << endl;
 
     cout << "Length of two route optimized when Prime addresses can not be swapped: ";
-    cout << primeList.twoTruckLength(withPrime, manhattan) << endl;
+    cout << twoTruckLength(withPrime, manhattan) << endl;
 
     /////////////////////////////////////////////////////////////////////////
     //55.9
     cout << endl << "**************************************************" << endl;
     cout << "Exercise 55.9:" << endl << endl;
+    
+    Route dynamic;
 
-    // vector<Route> primeTest = origSplit;
-    // for (int i =1; i <= 1; i++) {
-    //     Address toPrime = primeTest.at(0).at(i);
-    //     toPrime.changePrimeTo(true);
-    //     primeTest.at(0).replaceAddress(i,toPrime);
-    // }
-    // cout << endl;
-    // cout << multiOpt2input.twoTruckLength(origSplit, manhattan) << endl;
-    // origSplit.at(0).print(); cout << endl;
-    // origSplit.at(1).print();cout << endl;
+    ifstream existingDeliveries("data/opt2TestCase.txt");
+    while(existingDeliveries >> x >> y){
+        if(x != 0 || y != 0){
+            dynamic.addAddress(x,y);
+        }
 
-    // cout << primeList.twoTruckLength(primeTest,manhattan) << endl;
-    // primeTest.at(0).print(); cout << endl;
-    // primeTest.at(1).print(); cout << endl;
+    }
+    int originalRouteSize = dynamic.addressesSize() - 1;
+    
+    ifstream newDeliveries("data/newAddresses.txt");
+    AddressList newAddresses;
+    while(newDeliveries >> x >> y){
+        if(x != 0 || y != 0){
+            newAddresses.addAddress(x,y);
+        }
+    }
+    
+    vector<Route> opt2paths = dynamic.twoTruckOpt2();
+    opt2paths = addToExistingRoutes(opt2paths, newAddresses, manhattan);
+    vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan);
+
+    cout << "Adding " << newAddresses.addressesSize() << " addresses to " << originalRouteSize;
+    cout << " addresses split among two trucks." << endl << endl;
+
+    cout << "Adding new addresses to existing routes:" << endl;
+    cout << "Length: " << twoTruckLength(opt2paths, manhattan) << endl;
+    
+    cout << "Adding new addresses before optimization/splitting routes: " << endl;
+    cout << "Length: " << twoTruckLength(multiOpt2paths, manhattan) << endl;
+
+
     return 0;
-
-        // while (true)
+    // while (true)
     // {
     //     cin >> x >> y;
     //     cout << "Entered Address: (" << x << "," << y << ")" << endl;

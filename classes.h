@@ -17,6 +17,10 @@ using std::numeric_limits;
 using std::max;
 using std::min;
 
+class Route;
+double twoTruckLength(vector<Route> truckPaths, bool manhattan);
+void twoRouteOutput(vector<Route> truckPaths, bool manhattan);
+
 class Address{
     protected:
         int x, y; // Cartesian coordinates of address
@@ -39,11 +43,6 @@ class Address{
 
         void changePrimeTo(bool isPrime){
             prime = isPrime;
-        }
-
-        void add1(){
-            x++;
-            cout << x << endl;
         }
 
         /**
@@ -99,6 +98,10 @@ class AddressList{
         void addAddress(int x, int y, bool prime){
             Address newHouse(x,y,prime);
             addAddress(newHouse);
+        }
+
+        void insertAddress(int index, Address newAddress){
+            addresses.insert(addresses.begin() + index, newAddress);
         }
 
         void removeAddress(int i){
@@ -202,7 +205,6 @@ class Route : public AddressList{
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
             int maxToSwap = max((int)floor(0.1*opt2.addressesSize()), 1);
-            // cout << maxToSwap << endl;
             for(int numToSwap = 1; numToSwap < maxToSwap; numToSwap++){
                 for(int i = 1; i < addresses.size()-numToSwap; i++){
                     Route test = opt2;
@@ -212,9 +214,7 @@ class Route : public AddressList{
                         swapcount++;
                     }
                 }
-                // cout << numToSwap << endl;
             }
-            // cout << endl << swapcount << endl;
             return opt2;
         }
         /**
@@ -236,10 +236,6 @@ class Route : public AddressList{
             return routes;
         }
 
-        double twoTruckLength(vector<Route> truckPaths, bool manhattan=true){
-            return truckPaths.at(0).length(manhattan) + truckPaths.at(1).length(manhattan);
-        }
-
         void swapTwoPortions(vector<Route> &truckPaths, int start1, int start2, int numToSwap, bool manhattan = true){
             Route copy1 = truckPaths.at(0);
             for(int i = 0; i < numToSwap; i++){
@@ -250,17 +246,14 @@ class Route : public AddressList{
             }
         }
 
-        vector<Route> twoTruckOpt2(bool manhattan = true){
+        vector<Route> twoTruckOpt2(bool manhattan = true, float percentToSwap = 0.1){
             vector<Route> truckPaths = splitRoute(2);
             for(Route truckPath: truckPaths){
                 truckPath.opt2Route(manhattan);
             }
             
-            int maxToSwap = max((int)floor(0.5*addresses.size()/2), 1);
-            //cout << "MaxToSwap: " << maxToSwap << endl;
-            //vector<Route> actualMin = truckPaths;
+            int maxToSwap = max((int)floor(percentToSwap*addresses.size()/2), 1);
             for(int lengthToSwap = maxToSwap; lengthToSwap > 0; lengthToSwap--){
-            // for(int lengthToSwap = 1; lengthToSwap < maxToSwap; lengthToSwap++){
                 vector<Route> minPath = truckPaths;
                 for(int path1 = 1; path1 <= truckPaths.at(0).addressesSize()-lengthToSwap; path1++){
                     vector<Route> minTestPath = minPath;
@@ -307,14 +300,46 @@ class Route : public AddressList{
                     truckPaths = minPath;
                 }
             }
-            // if(twoTruckLength(truckPaths, manhattan) > twoTruckLength(truckPaths, manhattan)){
-            //         truckPaths = actualMin;
-            //     }
             return truckPaths;
+        }
+
+        vector<Route> addBeforeSplittingRoutes(AddressList newAddresses, bool manhattan = true){
+            for(int i = 0; i < newAddresses.addressesSize(); i++){
+                addresses.push_back(newAddresses.at(i));
+            }
+            return twoTruckOpt2(manhattan);
         }
 
         
 };
+
+vector<Route> addToExistingRoutes(vector<Route> paths, AddressList newAddresses, bool manhattan = true){
+    for(int i = 0; i < newAddresses.addressesSize(); i++){
+        Address house = newAddresses.at(i);
+        int index1 = paths.at(0).indexClosestTo(house);
+        int index2 = paths.at(1).indexClosestTo(house);
+        double distance1 = house.distance(paths.at(0).at(index1), manhattan);
+        double distance2 = house.distance(paths.at(1).at(index2), manhattan);
+        if(distance1 < distance2){
+            paths.at(0).insertAddress(index1, house);
+        }else{
+            paths.at(1).insertAddress(index2, house);
+        }
+    }
+    paths.at(0).opt2Route();
+    paths.at(1).opt2Route();
+    return paths;
+}
+
+double twoTruckLength(vector<Route> truckPaths, bool manhattan=true){
+            return truckPaths.at(0).length(manhattan) + truckPaths.at(1).length(manhattan);
+        }
+
+void twoRouteOutput(vector<Route> truckPaths, bool manhattan=true){
+    truckPaths.at(0).print(); cout << "Length: " << truckPaths.at(0).length(manhattan) << endl;
+    truckPaths.at(1).print(); cout << "Length: " << truckPaths.at(1).length(manhattan) << endl;
+    cout << "Total Length: " << twoTruckLength(truckPaths, manhattan) << endl << endl;
+}
 
 
 #endif
