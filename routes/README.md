@@ -1,0 +1,1 @@
+This folder stores route files for showRoutes.py to read from. Generate route files by compiling and running `main.cc`.

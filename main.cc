@@ -28,12 +28,13 @@ int main () {
     cout << "Original Route:" << endl; 
     deliveries.print(); cout << endl;
     cout << "Length: " << deliveries.length(manhattan) << endl << endl;
+    deliveries.saveRouteToFile("nongreedy");
 
     Route greedyDeliveries = deliveries.greedyRoute(manhattan);
     cout << "Greedy Route:" << endl;
     greedyDeliveries.print(); cout << endl;
     cout << "Length: " << greedyDeliveries.length(manhattan) << endl << endl;
-
+    greedyDeliveries.saveRouteToFile("greedy");    
     /////////////////////////////////////////////////////////////////////////
     //55.4
     cout << endl << "**************************************************" << endl;
@@ -55,6 +56,9 @@ int main () {
     cout << "Original List Length: " << sampleTour.length(manhattan) << endl;
     cout << "Greedy List Length: " << greedyList.length(manhattan) << endl;
     cout << "opt2 List Length: " << opt2List.length(manhattan) << endl << endl;
+
+    greedyList.saveRouteToFile("greedy150");
+    opt2List.saveRouteToFile("opt2_150");
     
     /////////////////////////////////////////////////////////////////////////
     //55.7
@@ -80,6 +84,9 @@ int main () {
 
     cout << "**New Route:" << endl;
     twoRouteOutput(multiOpt2Split, manhattan);
+
+    saveTwoRoutesToFile(origSplit,"pre_multopt2_");
+    saveTwoRoutesToFile(multiOpt2Split,"post_multopt2_");
 
     /////////////////////////////////////////////////////////////////////////
     //55.8
@@ -125,6 +132,9 @@ int main () {
     cout << "*Multi-opt2 Optimized Routes where Prime addresses can not be swapped:" << endl;
     twoRouteOutput(primeTwoTruck, manhattan);
 
+    saveTwoRoutesToFile(noPrimeTwoTruck, "noPrimeSmall");
+    saveTwoRoutesToFile(primeTwoTruck, "PrimeSmall", true);
+
     cout << "**Many-Address Prime Routes:" << endl;
     Route primeList;
 
@@ -153,6 +163,9 @@ int main () {
 
     cout << "Length of two route optimized when Prime addresses can not be swapped: ";
     cout << twoTruckLength(withPrime, manhattan) << endl;
+
+    saveTwoRoutesToFile(noPrime, "noPrimeLarge");
+    saveTwoRoutesToFile(withPrime, "withPrimeLarge", true);
 
     /////////////////////////////////////////////////////////////////////////
     //55.9
@@ -191,6 +204,8 @@ int main () {
     cout << "Adding new addresses before optimization/splitting routes: " << endl;
     cout << "Length: " << twoTruckLength(multiOpt2paths, manhattan) << endl;
 
+    saveTwoRoutesToFile(opt2paths, "dynamic_opt2_");
+    saveTwoRoutesToFile(multiOpt2paths, "dynamic_multi_");
 
     return 0;
     // while (true)

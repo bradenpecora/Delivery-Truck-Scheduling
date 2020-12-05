@@ -7,6 +7,8 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <fstream>
+#include <string>
 using std::cin;
 using std::cout;
 using std::endl;
@@ -16,6 +18,8 @@ using std::reverse;
 using std::numeric_limits;
 using std::max;
 using std::min;
+using std::string;
+using std::ofstream;
 
 class Route;
 double twoTruckLength(vector<Route> truckPaths, bool manhattan);
@@ -67,6 +71,15 @@ class Address{
         void print () {
             cout << "(" << getX() << "," << getY() << ") ";
         }
+
+        void printToFile(ofstream &output, bool printPrime = false) {
+            output << getX() << " " << getY();
+            if(printPrime){
+                output << " " << isPrime();
+            }
+            output << endl;
+        }
+
 
         
 };
@@ -310,6 +323,19 @@ class Route : public AddressList{
             return twoTruckOpt2(manhattan);
         }
 
+        void saveRouteToFile(string fileName, bool printPrime = false) {
+            fileName = "routes/" + fileName + ".txt";
+            ofstream output;
+            output.open(fileName);
+            for(int i = 0; i < addresses.size(); i++){
+                addresses.at(i).printToFile(output, printPrime);
+            }
+            depot.printToFile(output,printPrime);
+            output.close();
+        }
+
+        
+
         
 };
 
@@ -341,5 +367,11 @@ void twoRouteOutput(vector<Route> truckPaths, bool manhattan=true){
     cout << "Total Length: " << twoTruckLength(truckPaths, manhattan) << endl << endl;
 }
 
+void saveTwoRoutesToFile(vector<Route> paths, string fileName, bool printPrime = false){
+            string path1 =  fileName + "1";
+            string path2 =  fileName + "2";
+            paths.at(0).saveRouteToFile(path1, printPrime);
+            paths.at(1).saveRouteToFile(path2, printPrime);
+        }
 
 #endif
