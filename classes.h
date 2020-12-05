@@ -218,7 +218,7 @@ class Route : public AddressList{
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
             int maxToSwap = max((int)floor(percentToSwap*opt2.addressesSize()), 1);
-            for(int numToSwap = 1; numToSwap < maxToSwap; numToSwap++){
+            for(int numToSwap = maxToSwap; numToSwap > 0; numToSwap--){
                 for(int i = 1; i < addresses.size()-numToSwap; i++){
                     Route test = opt2;
                     test.reverseAddresses(i, numToSwap);

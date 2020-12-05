@@ -50,7 +50,7 @@ int main () {
     }
 
     Route greedyList = sampleTour.greedyRoute(manhattan);
-    Route opt2List = sampleTour.opt2Route(manhattan,0.98);
+    Route opt2List = sampleTour.opt2Route(manhattan,0.75);
 
     cout << "For a list of 150 random addresses (x,y from [-100,100]):" << endl;
     cout << "Original List Length: " << sampleTour.length(manhattan) << endl;
