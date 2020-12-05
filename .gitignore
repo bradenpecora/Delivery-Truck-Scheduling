@@ -1,2 +1,4 @@
 *.out
 settings.json
+routes/*.txt
+
