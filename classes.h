@@ -214,10 +214,10 @@ class Route : public AddressList{
             return greedy;
         }
         
-        Route opt2Route(bool manhattan=true){
+        Route opt2Route(bool manhattan=true, float percentToSwap=0.1){
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
-            int maxToSwap = max((int)floor(0.1*opt2.addressesSize()), 1);
+            int maxToSwap = max((int)floor(percentToSwap*opt2.addressesSize()), 1);
             for(int numToSwap = 1; numToSwap < maxToSwap; numToSwap++){
                 for(int i = 1; i < addresses.size()-numToSwap; i++){
                     Route test = opt2;

@@ -21,6 +21,10 @@ for filename in sys.argv:
             for xCoor, yCoor, isPrime in zip(x, y, prime):
                 if isPrime:
                     plt.scatter(xCoor, yCoor, c="#FF9900")
-        plt.title(filename)
+        title = filename.replace('routes/', '')
+        title = title.replace('.txt', '')
+        plt.title(title)
     color="#008800"
 plt.show()
+title = 'figures/' + title + '.pdf'
+plt.savefig(title)
