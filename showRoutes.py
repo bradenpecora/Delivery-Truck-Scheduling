@@ -45,6 +45,6 @@ if prime:
     plt.legend([depot, prime], ["Depot", "Prime customer"])
 else:
     plt.legend([depot], ["Depot"])
-plt.show()
 savePath = 'figures/' + title + '.pdf'
 plt.savefig(savePath)
+plt.show()
