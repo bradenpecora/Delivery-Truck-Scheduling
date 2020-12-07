@@ -120,7 +120,7 @@ int main () {
     cout << "The Prime addresses that can not be swapped are:" << endl;
     primeAddresses.print(); cout << endl;
 
-    vector<Route> noOrg = noPrimeTruck.splitRoute(2);
+    vector<Route> noOrg = primeTruck.splitRoute(2);
     cout << "*Routes as inputted: " << endl;
     twoRouteOutput(noOrg, manhattan);
 
@@ -132,7 +132,8 @@ int main () {
     cout << "*Multi-opt2 Optimized Routes where Prime addresses can not be swapped:" << endl;
     twoRouteOutput(primeTwoTruck, manhattan);
 
-    saveTwoRoutesToFile(noPrimeTwoTruck, "noPrimeSmall");
+    saveTwoRoutesToFile(noOrg, "noOpt", true);
+    saveTwoRoutesToFile(noPrimeTwoTruck, "noPrimeSmall", true);
     saveTwoRoutesToFile(primeTwoTruck, "PrimeSmall", true);
 
     cout << "**Many-Address Prime Routes:" << endl;

@@ -214,7 +214,7 @@ class Route : public AddressList{
             return greedy;
         }
         
-        Route opt2Route(bool manhattan=true, float percentToSwap=0.1){
+        Route opt2Route(bool manhattan=true, float percentToSwap=0.5){
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
             int maxToSwap = max((int)floor(percentToSwap*opt2.addressesSize()), 1);
@@ -261,8 +261,8 @@ class Route : public AddressList{
 
         vector<Route> twoTruckOpt2(bool manhattan = true, float percentToSwap = 0.1){
             vector<Route> truckPaths = splitRoute(2);
-            for(Route truckPath: truckPaths){
-                truckPath.opt2Route(manhattan);
+            for(int truckPath = 0; truckPath < truckPaths.size(); truckPath++){
+                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan);
             }
             
             int maxToSwap = max((int)floor(percentToSwap*addresses.size()/2), 1);
@@ -313,6 +313,10 @@ class Route : public AddressList{
                     truckPaths = minPath;
                 }
             }
+            for(int truckPath = 0; truckPath < truckPaths.size(); truckPath++){
+                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan);
+            }
+            
             return truckPaths;
         }
 
@@ -352,8 +356,9 @@ vector<Route> addToExistingRoutes(vector<Route> paths, AddressList newAddresses,
             paths.at(1).insertAddress(index2, house);
         }
     }
-    paths.at(0).opt2Route();
-    paths.at(1).opt2Route();
+    for(int path = 0; path < paths.size(); path++){
+        paths.at(path) = paths.at(path).opt2Route(manhattan);
+    }
     return paths;
 }
 
