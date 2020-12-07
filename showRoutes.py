@@ -7,6 +7,7 @@ import os
 color = "#0000FF"
 depot_color = "#000000"
 draw_arrow = False
+prime = None
 for filename in sys.argv:
     if filename == "showRoutes.py":
         continue
@@ -34,12 +35,16 @@ for filename in sys.argv:
         if len(prime) > 0:
             for xCoor, yCoor, isPrime in zip(x, y, prime):
                 if isPrime:
-                    plt.plot(xCoor, yCoor, c="#FF9900", marker='o')
+                    prime = plt.scatter(xCoor, yCoor, c="#FF9900", zorder=10)
         title = filename.replace('routes/', '')
         title = title.replace('.txt', '')
         plt.title(title)
     color="#008800"
-plt.plot(0, 0, c=depot_color, marker='o')
+depot = plt.scatter(0, 0, c=depot_color, zorder=10)
+if prime:
+    plt.legend([depot, prime], ["Depot", "Prime customer"])
+else:
+    plt.legend([depot], ["Depot"])
 plt.show()
 savePath = 'figures/' + title + '.pdf'
 plt.savefig(savePath)
