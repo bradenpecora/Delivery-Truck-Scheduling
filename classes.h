@@ -214,14 +214,14 @@ class Route : public AddressList{
             return greedy;
         }
         
-        Route opt2Route(bool manhattan=true, float percentToSwap=0.5){
+        Route opt2Route(bool manhattan=true, float percentToReverse=0.5){
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
-            int maxToSwap = max((int)floor(percentToSwap*opt2.addressesSize()), 1);
-            for(int numToSwap = maxToSwap; numToSwap > 0; numToSwap--){
-                for(int i = 1; i < addresses.size()-numToSwap; i++){
+            int maxToReverse = max((int)floor(percentToReverse*opt2.addressesSize()), 1);
+            for(int numToReverse = maxToReverse; numToReverse > 0; numToReverse--){
+                for(int i = 1; i < addresses.size()-numToReverse; i++){
                     Route test = opt2;
-                    test.reverseAddresses(i, numToSwap);
+                    test.reverseAddresses(i, numToReverse);
                     if(test.length(manhattan) < opt2.length(manhattan)){
                         opt2 = test;
                         swapcount++;
