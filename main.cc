@@ -192,7 +192,7 @@ int main () {
         }
     }
     
-    vector<Route> opt2paths = dynamic.twoTruckOpt2();
+    vector<Route> opt2paths = dynamic.twoTruckOpt2(manhattan);
     opt2paths = addToExistingRoutes(opt2paths, newAddresses, manhattan);
     vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan);
 
