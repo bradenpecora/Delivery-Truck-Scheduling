@@ -1,5 +1,5 @@
-# icpc -o amazon_demo main.cc
-g++ -o amazon_demo.out main.cc
+# icpc -std=c++11 -o amazon_demo.out main.cc
+g++ -std=c++11 -o amazon_demo.out main.cc
 ./amazon_demo.out
 python3 showRoutes.py --arrows routes/greedy.txt & python3 showRoutes.py --arrows routes/nongreedy.txt
 python3 showRoutes.py routes/Greedy\ 150.txt & python3 showRoutes.py routes/\'Opt2\'\ 150.txt
