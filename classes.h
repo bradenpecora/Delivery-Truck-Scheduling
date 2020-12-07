@@ -324,7 +324,7 @@ class Route : public AddressList{
             for(int i = 0; i < newAddresses.addressesSize(); i++){
                 addresses.push_back(newAddresses.at(i));
             }
-            return twoTruckOpt2(manhattan);
+            return twoTruckOpt2(manhattan, 0.5);
         }
 
         void saveRouteToFile(string fileName, bool printPrime = false) {
@@ -337,8 +337,6 @@ class Route : public AddressList{
             depot.printToFile(output,printPrime);
             output.close();
         }
-
-        
 
         
 };
@@ -356,9 +354,8 @@ vector<Route> addToExistingRoutes(vector<Route> paths, AddressList newAddresses,
             paths.at(1).insertAddress(index2, house);
         }
     }
-    for(int path = 0; path < paths.size(); path++){
-        paths.at(path) = paths.at(path).opt2Route(manhattan);
-    }
+    paths.at(0) = paths.at(0).opt2Route(manhattan);
+    paths.at(1) = paths.at(1).opt2Route(manhattan);
     return paths;
 }
 
