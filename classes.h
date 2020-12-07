@@ -214,7 +214,7 @@ class Route : public AddressList{
             return greedy;
         }
         
-        Route opt2Route(bool manhattan=true, float percentToReverse=0.5){
+        Route opt2Route(bool manhattan=true, float percentToReverse=0.15){
             Route opt2 = greedyRoute(manhattan);
             int swapcount = 0;
             int maxToReverse = max((int)floor(percentToReverse*opt2.addressesSize()), 1);
