@@ -320,11 +320,11 @@ class Route : public AddressList{
             return truckPaths;
         }
 
-        vector<Route> addBeforeSplittingRoutes(AddressList newAddresses, bool manhattan = true, double percentToReverse = 0.15){
+        vector<Route> addBeforeSplittingRoutes(AddressList newAddresses, bool manhattan = true, double percentToSwap = 0.15){
             for(int i = 0; i < newAddresses.addressesSize(); i++){
                 addresses.push_back(newAddresses.at(i));
             }
-            return twoTruckOpt2(manhattan, percentToReverse);
+            return twoTruckOpt2(manhattan, percentToSwap);
         }
 
         void saveRouteToFile(string fileName, bool printPrime = false) {
