@@ -192,10 +192,10 @@ int main () {
         }
     }
     
-    vector<Route> opt2paths = dynamic.twoTruckOpt2(manhattan);
-    opt2paths = addToExistingRoutes(opt2paths, newAddresses, manhattan);
-    saveTwoRoutesToFile(dynamic.twoTruckOpt2(manhattan), "dynamic_original_");
-    vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan);
+    vector<Route> opt2paths = dynamic.twoTruckOpt2(manhattan, 0.5);
+    opt2paths = addToExistingRoutes(opt2paths, newAddresses, manhattan, 0.5);
+    saveTwoRoutesToFile(dynamic.twoTruckOpt2(manhattan, 0.5), "dynamic_original_");
+    vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan, 0.5);
 
     cout << "Adding " << newAddresses.addressesSize() << " addresses to " << originalRouteSize;
     cout << " addresses split among two trucks." << endl << endl;
