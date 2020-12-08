@@ -175,7 +175,7 @@ int main () {
     
     Route dynamic;
 
-    ifstream existingDeliveries("data/opt2TestCase.txt");
+    ifstream existingDeliveries("data/existingAddresses.txt");
     while(existingDeliveries >> x >> y){
         if(x != 0 || y != 0){
             dynamic.addAddress(x,y);
@@ -192,12 +192,15 @@ int main () {
         }
     }
     
-    vector<Route> opt2paths = dynamic.twoTruckOpt2(manhattan);
-    opt2paths = addToExistingRoutes(opt2paths, newAddresses, manhattan);
-    vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan);
+    vector<Route> originalRoutes = dynamic.twoTruckOpt2(manhattan, 0.5);
+    vector<Route> opt2paths = addToExistingRoutes(originalRoutes, newAddresses, manhattan, 0.5);
+    saveTwoRoutesToFile(originalRoutes, "dynamic_original_");
+    vector<Route> multiOpt2paths = dynamic.addBeforeSplittingRoutes(newAddresses, manhattan, 0.5);
 
     cout << "Adding " << newAddresses.addressesSize() << " addresses to " << originalRouteSize;
     cout << " addresses split among two trucks." << endl << endl;
+
+    cout << "Initial optimized routes' total length: " << twoTruckLength(originalRoutes, manhattan) << endl;
 
     cout << "Adding new addresses to existing routes:" << endl;
     cout << "Length: " << twoTruckLength(opt2paths, manhattan) << endl;

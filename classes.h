@@ -259,10 +259,10 @@ class Route : public AddressList{
             }
         }
 
-        vector<Route> twoTruckOpt2(bool manhattan = true, float percentToSwap = 0.1){
+        vector<Route> twoTruckOpt2(bool manhattan = true, float percentToSwap = 0.15){
             vector<Route> truckPaths = splitRoute(2);
             for(int truckPath = 0; truckPath < truckPaths.size(); truckPath++){
-                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan);
+                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan, percentToSwap);
             }
             
             int maxToSwap = max((int)floor(percentToSwap*addresses.size()/2), 1);
@@ -314,17 +314,17 @@ class Route : public AddressList{
                 }
             }
             for(int truckPath = 0; truckPath < truckPaths.size(); truckPath++){
-                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan);
+                truckPaths.at(truckPath) = truckPaths.at(truckPath).opt2Route(manhattan, percentToSwap);
             }
             
             return truckPaths;
         }
 
-        vector<Route> addBeforeSplittingRoutes(AddressList newAddresses, bool manhattan = true){
+        vector<Route> addBeforeSplittingRoutes(AddressList newAddresses, bool manhattan = true, double percentToSwap = 0.15){
             for(int i = 0; i < newAddresses.addressesSize(); i++){
                 addresses.push_back(newAddresses.at(i));
             }
-            return twoTruckOpt2(manhattan);
+            return twoTruckOpt2(manhattan, percentToSwap);
         }
 
         void saveRouteToFile(string fileName, bool printPrime = false) {
@@ -339,25 +339,32 @@ class Route : public AddressList{
         }
 
         
-
-        
 };
 
-vector<Route> addToExistingRoutes(vector<Route> paths, AddressList newAddresses, bool manhattan = true){
+vector<Route> addToExistingRoutes(vector<Route> paths, AddressList newAddresses, bool manhattan = true, double percentToReverse = 0.15){
     for(int i = 0; i < newAddresses.addressesSize(); i++){
         Address house = newAddresses.at(i);
-        int index1 = paths.at(0).indexClosestTo(house);
-        int index2 = paths.at(1).indexClosestTo(house);
-        double distance1 = house.distance(paths.at(0).at(index1), manhattan);
-        double distance2 = house.distance(paths.at(1).at(index2), manhattan);
-        if(distance1 < distance2){
-            paths.at(0).insertAddress(index1, house);
+        Route route1 = paths.at(0);
+        Route route2 = paths.at(1);
+        double origDist1 = route1.length(manhattan);
+        double origDist2 = route2.length(manhattan);
+
+        int index1 = route1.indexClosestTo(house);
+        int index2 = route2.indexClosestTo(house);
+        route1.insertAddress(index1, house);
+        route2.insertAddress(index2, house);
+
+        route1 = route1.opt2Route(manhattan, percentToReverse);
+        route2 = route2.opt2Route(manhattan, percentToReverse);
+        double newDist1 = route1.length(manhattan);
+        double newDist2 = route2.length(manhattan);
+
+        if(newDist1 - origDist1 < newDist2 - origDist2){
+        // if(newDist1 < newDist2 ){
+            paths.at(0) = route1;
         }else{
-            paths.at(1).insertAddress(index2, house);
+            paths.at(1) = route2;
         }
-    }
-    for(int path = 0; path < paths.size(); path++){
-        paths.at(path) = paths.at(path).opt2Route(manhattan);
     }
     return paths;
 }
