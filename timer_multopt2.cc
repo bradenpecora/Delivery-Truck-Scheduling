@@ -26,8 +26,8 @@ int main () {
     double lengthAvg = 0;
 
     int numberOfFiles = 5;
-    int timeTrials = 10;
-    vector<double> percentToSwaps = {0.05, .10, .15, .20};
+    int timeTrials = 5;
+    vector<double> percentToSwaps = {.15};
     string fileName = "test";
 
 
@@ -67,6 +67,10 @@ int main () {
 
                 timeIncrease += ((multTime.count() / optTime.count())-1)*100;
 
+                // cout << "opt2 time " << optTime.count() << endl;
+                // cout << "mult time " << multTime.count() << endl;
+                // cout << "time increase " << timeIncrease << endl << endl;
+
                 double optLength = twoTruckLength(optList, manhattan);
                 double multLength = twoTruckLength(mult2List, manhattan);
 
@@ -78,9 +82,9 @@ int main () {
 
             lengthAvg += percentLength;
 
-            cout << "File " << j+1 << ": " << endl;
-            cout << "Change in Length: " << changeInLength << endl;
-            cout << "Percent decrease in Length: " << percentLength << "%" << endl << endl;
+            // cout << "File " << j+1 << ": " << endl;
+            // cout << "Change in Length: " << changeInLength << endl;
+            // cout << "Percent decrease in Length: " << percentLength << "%" << endl << endl;
         }
         timeAvg = timeAvg/numberOfFiles;
         lengthAvg = lengthAvg/numberOfFiles;
@@ -88,6 +92,7 @@ int main () {
         cout << "For " << numberOfFiles << " files at a percent to swap of " << percentToSwap* 100 << "%:" << endl;
         cout << "Average runtime Increase: " << timeAvg << "%" << endl;
         cout << "Average length Decrease: " << lengthAvg << "%" << endl;
+
 
     }
     return 0;
