@@ -11,8 +11,12 @@ using std::ifstream;
 int main () {
 
     bool manhattan = false;
-    float x,y;
+    //Program uses 'manhattan' distance to calculate length between (x,y) coordinates if true or undefined.
+    //Program uses pythagorean distance between addresses. 
+
+    int x,y;
     bool prime;
+    //Variables used for ifstream file input.
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -95,7 +99,7 @@ int main () {
 
     
     cout << "**Few-Addresses Prime Routes:" << endl;
-    Route noPrimeTruck;
+    Route noPrimeTruck; //Adds addresses to noPrimeTruck while ignoring 'prime' status.
     ifstream fewPrimeListFileNoPrime("data/fewPrimeTestCase.txt");
     while(fewPrimeListFileNoPrime >> x >> y >> prime){
         if(x != 0 || y != 0){
@@ -103,7 +107,7 @@ int main () {
         }
     }
 
-    Route primeTruck;
+    Route primeTruck; //Adds addresses to primeTruck without ignoring 'prime' status.
     ifstream fewPrimeListFile("data/fewPrimeTestCase.txt");
     while(fewPrimeListFile >> x >> y >> prime){
         if(x != 0 || y != 0){
@@ -150,6 +154,9 @@ int main () {
 
     double primePercent = 0.40;
     int primeCounter = 0;
+
+    //Assigns (100*primePercent)% of the addresses to 'Prime' status.
+    //Assumes addresses are inputted to 'primeList' in a random order. 
     for (;primeCounter < floor(primePercent*primeList.addressesSize()); primeCounter++){
         Address toPrime = primeList.at(primeCounter); 
         toPrime.changePrimeTo(true);
@@ -212,6 +219,10 @@ int main () {
     saveTwoRoutesToFile(multiOpt2paths, "dynamic_multi_");
 
     return 0;
+
+    //Manual address input:
+    //Inputting (0,0) stops the input.
+    //
     // while (true)
     // {
     //     cin >> x >> y;
