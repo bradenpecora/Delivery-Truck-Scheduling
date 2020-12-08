@@ -24,7 +24,7 @@ double twoTruckLength(vector<Route> truckPaths, bool manhattan);
 void twoRouteOutput(vector<Route> truckPaths, bool manhattan);
 
 class Address{
-    protected:
+    private:
         int x, y; // Cartesian coordinates of address
         bool prime; //Amazon 'Prime' status of an address. Defaults to false if not specified.
     public:
