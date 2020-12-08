@@ -19,4 +19,4 @@ Change the first line of `run_demo.sh` to whatever your C++ compiler is.
 sh run_demo.sh
 ```
 
-This script compiles and runs the program, which includes a demonstration of various scenarios as described in the write-up. It also saves the routes to the `routes` folder, then generates and saves maps of each route to the `figures` folder. To continue to the next scenario, simply close all of the currently showing maps. 
+This script compiles and runs the program, which includes a demonstration of various scenarios as described in the write-up. It also saves the routes to the `routes` folder, then generates and saves maps of each route to the `figures` folder. To continue to the next scenario, simply close all of the currently showing maps. To use custom test data, replace the corresponding files in the `data`.
