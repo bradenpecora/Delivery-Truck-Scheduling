@@ -1,5 +1,5 @@
 #include <iostream>
-#include "classes.h"
+#include "../classes.h"
 #include <fstream>
 #include <chrono>
 #include <string>
@@ -29,10 +29,10 @@ int main () {
 
     //Change the following variables as needed:
     bool manhattan = false;
-    int numberOfFiles = 5;
-    int timeTrials = 10;
-    vector<double> percentToReverseVec = {0.15};
-    string fileName = "test"; //File name without .txt
+    int numberOfFiles = 5;//Number of files. Files must be named with a number; i.e. timer1.txt, timer2.txt
+    int timeTrials = 10;//Number of times each instance is run to find average runtime
+    vector<double> percentToReverseVec = {0.15}; //Different values to be tested
+    string fileName = "test"; //File name without #.txt
 
     for(double percentToReverse : percentToReverseVec){
         cout << "*************************" << endl;

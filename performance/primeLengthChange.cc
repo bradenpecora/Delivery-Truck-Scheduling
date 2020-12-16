@@ -1,5 +1,5 @@
 #include <iostream>
-#include "classes.h"
+#include "../classes.h"
 #include <fstream>
 #include <string>
 
