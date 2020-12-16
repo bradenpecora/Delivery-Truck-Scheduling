@@ -1,4 +1,4 @@
-# coe322-tsp
+# Amazon Delivery Truck Scheduling
 
 This repository contains our (Braden Pecora and Harrison Jin) final project for COE 322 Fall 2020. This project is the Amazon Delivery Truck project. See the PDF file for full writeup.
 
