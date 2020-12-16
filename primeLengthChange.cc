@@ -13,15 +13,18 @@ using std::to_string;
 
 int main () {
 
-    bool manhattan = false;
+    //Measure the change in length that occurs when the 'Prime' status of an addresses is
+    //account for. Prime indicates that the address can not be swapped between routes.
+
     float x,y;
     bool prime;
     double avgLengthChange = 0;
 
-    int numberOfFiles = 5;
-    double percentToSwap = 0.25;
-    vector<double> primePercents = {.01,.05,.1,.25,.5,.75};
-    string fileName = "test";
+    bool manhattan = false;
+    int numberOfFiles = 5; //Number of files. Files must be named with a number; i.e. timer1.txt, timer2.txt
+    double percentToSwap = 0.25; //Percent to swap for opt2 method
+    vector<double> primePercents = {.01,.05,.1,.25,.5,.75};//Percents of addresses that are prime to be tested
+    string fileName = "test";//File name wihout #.txt  Files must be in this directory
 
 
     for (double primePercent : primePercents){

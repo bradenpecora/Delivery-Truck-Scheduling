@@ -17,18 +17,22 @@ using std::to_string;
 
 int main () {
 
-    bool manhattan = false;
+    //Finds average runtime increase and length decrease for the multiple opt2 method
+    //in comparison to the single opt2 method.
+
     float x,y;
     double timeAvg = 0;
-    double mult2Length, multLength;
+    double mult2Length, optLength;
     double changeInLength;
     double percentLength;
     double lengthAvg = 0;
 
-    int numberOfFiles = 5;
-    int timeTrials = 5;
-    vector<double> percentToSwaps = {.15};
-    string fileName = "test";
+    //Change the following variables as needed
+    bool manhattan = false;
+    int numberOfFiles = 5;//Number of files. Files must be named with a number; i.e. timer1.txt, timer2.txt
+    int timeTrials = 5;//Number of times each instance is run to find average runtime
+    vector<double> percentToSwaps = {.15};//Different values to be tested
+    string fileName = "test";//File name without #.txt  Files must be in this directory
 
 
     for (double percentToSwap : percentToSwaps){
@@ -71,10 +75,10 @@ int main () {
                 // cout << "mult time " << multTime.count() << endl;
                 // cout << "time increase " << timeIncrease << endl << endl;
 
-                double optLength = twoTruckLength(optList, manhattan);
-                double multLength = twoTruckLength(mult2List, manhattan);
+                optLength = twoTruckLength(optList, manhattan);
+                mult2Length = twoTruckLength(mult2List, manhattan);
 
-                changeInLength = optLength - multLength;
+                changeInLength = optLength - mult2Length;
                 percentLength = (changeInLength / optLength) * 100;
             }
             timeIncrease = timeIncrease/timeTrials;
